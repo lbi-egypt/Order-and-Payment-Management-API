@@ -59,6 +59,8 @@ HTTP Code 409: Conflict
 HTTP Code 422: Unprocessable Entity
 
 ## Environment Variables
+
+```
 PAYMENT_GATEWAYS=credit_card,paypal
 
 CREDIT_CARD_API_KEY=sk_test_credit
@@ -66,6 +68,7 @@ CREDIT_CARD_API_KEY=sk_test_credit
 PAYPAL_CLIENT_ID=paypal-user
 
 PAYPAL_SECRET=paypal-secret
+```
 
 ## How to Add a New Payment Gateway
 
