@@ -1,66 +1,103 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Order-and-Payment-Management-API
+Extendable Order and Payment Management API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+1 - Introduction
 
-## About Laravel
+2 - Authentication
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+3 - Orders
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+4 - Payments
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+5 - Business Rules
 
-## Learning Laravel
+6 - Error Responses
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+7 - Environment Variables
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+8 - How to Add a New Payment Gateway
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Introduction
+- Manage customer orders
+- Process payments through multiple gateways
+- Extend the system easily by adding new gateway classes
+- Enforce consistent business logic for orders/payments
+- Authentication uses JWT (JSON Web Tokens).
+- All protected endpoints must include: ==> Authorization: Bearer <token>
 
-## Laravel Sponsors
+## Authentication
+Register, Login, Logout ..... You can find in ==> Payment.postman_collection.json
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Orders
+Create Order, List Orders, View Single Order, Update Order, Delete Order ..... You can find in ==> Payment.postman_collection.json
 
-### Premium Partners
+## Payments
+List Payments, List Payments for Order, View Payment ..... You can find in ==> Payment.postman_collection.json
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## Business Rules
+Orders:
 
-## Contributing
+Orders can be created in pending, confirmed, or cancelled status.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Orders cannot be deleted if they have payments.
 
-## Code of Conduct
+Payments:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Payments can only be processed for confirmed orders.
 
-## Security Vulnerabilities
+Payments use pluggable gateway classes via the Strategy Pattern.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Error Responses
+HTTP Code 400: Bad Request
 
-## License
+HTTP Code 401: Unauthorized
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+HTTP Code 403: Forbidden
+
+HTTP Code 409: Conflict
+
+HTTP Code 422: Unprocessable Entity
+
+## Environment Variables
+
+```
+PAYMENT_GATEWAYS=credit_card,paypal
+
+CREDIT_CARD_API_KEY=sk_test_credit
+
+PAYPAL_CLIENT_ID=paypal-user
+
+PAYPAL_SECRET=paypal-secret
+```
+
+## How to Add a New Payment Gateway
+
+1 - Create a new gateway class:
+
+/app/Services/PaymentGateways/MyNewGateway.php
+
+2 - Implement the interface:
+```
+class MyNewGateway implements PaymentGatewayInterface {
+
+    public function process(Order $order, array $payload): array {
+    
+        // ...
+        
+    }
+    
+}
+```
+3 - Register gateway in config/payment_gateways.php:
+```
+'map' => [
+    'stripe' => App\Services\PaymentGateways\MyNewGateway::class,
+]
+```
+4 - Add credentials to .env:
+
+```
+MyNewGateway_KEY=xxx
+MyNewGateway_SECRET=yyy
+
+```
