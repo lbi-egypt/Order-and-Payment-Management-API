@@ -91,7 +91,7 @@ class MyNewGateway implements PaymentGatewayInterface {
 3 - Register gateway in config/payment_gateways.php:
 ```
 'map' => [
-    'stripe' => App\Services\PaymentGateways\MyNewGateway::class,
+    'MyNew' => App\Services\PaymentGateways\MyNewGateway::class,
 ]
 ```
 4 - Add credentials to .env:
